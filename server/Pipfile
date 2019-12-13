@@ -1,0 +1,12 @@
+[[source]]
+name = "paypal"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+verify_ssl = true
+
+[requires]
+python_version = "3.7"
+
+[packages]
+flask = "*"
+flask-cors = "*"
+paypal-checkout-serversdk = "*"
