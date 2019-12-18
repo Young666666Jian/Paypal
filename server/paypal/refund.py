@@ -10,10 +10,10 @@ class RefundOrder(PayPalClient):
     """Use the following function to refund an capture.
        Pass a valid capture ID as an argument."""
 
-    def refund_order(self, capture_id, debug=False):
+    def refund_order(self, capture_id, amount, currency_code, debug=False):
         request = CapturesRefundRequest(capture_id)
         request.prefer("return=representation")
-        request.request_body(self.build_request_body())
+        request.request_body(self.build_request_body(amount, currency_code))
         # 3. Call PayPal to refund an capture
         response = self.client.execute(request)
         if debug:
@@ -24,19 +24,19 @@ class RefundOrder(PayPalClient):
             for link in response.result.links:
                 print('\t{}: {}\tCall Type: {}'.format(
                     link.rel, link.href, link.method))
-            json_data = self.object_to_json(response.result)
-            print("json_data: ", json.dumps(json_data, indent=4))
+            json_data = response.result._dict
+            print("json_data: ", json_data)
         return response
 
     """Request body for building a partial refund request.
      For full refund, pass the empty body.
      For more details, refer to the Payments API refund captured payment reference."""
     @staticmethod
-    def build_request_body():
+    def build_request_body(amount, currency_code):
         return \
             {
                 "amount": {
-                    "value": "20.00",
-                    "currency_code": "USD"
+                    "value": amount,
+                    "currency_code": currency_code
                 }
             }

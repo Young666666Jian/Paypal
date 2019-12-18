@@ -2,7 +2,8 @@
 from . import paypal
 from flask import jsonify, request
 from paypal.checkout import GetOrder
-from paypalrestsdk import BillingPlan, configure, Payment, Api
+from paypal.refund import RefundOrder
+from paypalrestsdk import BillingPlan, configure, Payment, Api, Sale
 import logging
 import json
 logging.basicConfig(level=logging.INFO)
@@ -23,7 +24,7 @@ def order():
     print ("Info: Payment Successfully.")
     return jsonify({"message": "Payment Successfully."}), 200
 
-#  api v1/payments has deprecated
+#  api v1/payments has deprecated, only can get payment info from api order and authorized
 @paypal.route("/paymentDetail", methods=["GET"])
 def paymentDetail():
     arguments = request.args
@@ -33,12 +34,27 @@ def paymentDetail():
         paymentInfo = GetOrder().get_order(orderId)
     elif authorizationId:
         paymentInfo = GetOrder().get_order(authorizationId)
-    print(paymentInfo)
-    return jsonify({"result": paymentInfo}), 200
+    return jsonify({"result": json.dumps(paymentInfo)}), 200
 
 @paypal.route("/refund", methods=["GET"])
 def refund():
-    return jsonify({"message": "Payment Successfully."}), 200
+    arguments = request.args
+    orderId = arguments.get('orderID')
+    if not orderId:
+        return jsonify({"error": "no order ID"}), 500
+    paymentInfo = GetOrder().get_order(orderId)
+    if paymentInfo:
+        amount = paymentInfo['amount']
+        currency = paymentInfo['currency']
+    else:
+        return jsonify({"error": "Cannot get payment info"}), 500
+    try:
+        RefundOrder().refund_order('14G34927SX986220R', amount, currency, debug=True)
+    except Exception as err:
+        errData = err.__dict__
+        errMsg = json.loads(errData['message'])
+        return jsonify({"error": errMsg['details']}), 500
+    return jsonify({"message": "refund successfully"}), 200
 
 @paypal.route("/execute", methods=["GET"])
 def execute():

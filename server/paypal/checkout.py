@@ -37,4 +37,9 @@ class GetOrder(PayPalClient):
         transaction.update({ 'currency': response.result.purchase_units[0].amount.currency_code, 'amount': response.result.purchase_units[0].amount.value })
         print('Gross Amount: {} {}'.format(response.result.purchase_units[0].amount.currency_code,
                                            response.result.purchase_units[0].amount.value))
-        return json.dumps(transaction)
+        print ('Capture Ids: ')
+        for purchase_unit in response.result.purchase_units:
+            for capture in purchase_unit.payments.captures:
+                print ('\t', capture.id)
+                print (capture._dict)
+        return transaction

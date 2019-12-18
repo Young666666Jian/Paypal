@@ -31,7 +31,7 @@ class PayPalClient:
                 continue
             result[key] = self.array_to_json_array(value) if isinstance(value, list) else\
                         self.object_to_json(value) if not self.is_primittive(value) else\
-                         value
+                        value
         return result
     def array_to_json_array(self, json_array):
         result =[]
