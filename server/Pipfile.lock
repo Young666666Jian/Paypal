@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6e722206c2df32b0e271b713908f8060a87068c6f50f37ae4aca7e1ca77bff50"
+            "sha256": "ab4aa4c52167beefe618970345e00bf1f3b104d0d968af8bb9c7d2788a6447e7"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -185,6 +185,13 @@
                 "sha256:c7173be7e88f6387a21eba0259d9152dbc75d1dc45e9dd308220781af674336c"
             ],
             "version": "==1.0.0"
+        },
+        "paypalrestsdk": {
+            "hashes": [
+                "sha256:238713208031e8981bf70b3350b3d7f85ed64d34e0f21e4c1184444a546fee7f"
+            ],
+            "index": "paypal",
+            "version": "==1.13.1"
         },
         "pycparser": {
             "hashes": [

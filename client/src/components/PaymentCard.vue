@@ -3,10 +3,11 @@
     <paypal
       class="py-3"
       env="sandbox"
-      amount="1"
+      amount="10"
       currency="USD"
       locale="en_US"
       :client="credentials"
+      :items="transactions"
       v-on:payment-authorized="paymentauthorized"
       v-on:payment-completed="paymentcompleted"
       v-on:payment-cancelled="cancel"
@@ -38,12 +39,19 @@ export default {
       },
       transactions: [
         {
-          name: "hat",
-          description: "Brown hat.",
-          quantity: "1",
-          price: "5",
-          currency: "USD"
-        }
+          "name": "hat",
+          "description": "Brown hat.",
+          "quantity": "1",
+          "price": "5",
+          "currency": "USD"
+          },
+          {
+          "name": "handbag",
+          "description": "Black handbag.",
+          "quantity": "1",
+          "price": "5",
+          "currency": "USD"
+          }
       ]
     };
   },
@@ -51,7 +59,11 @@ export default {
   created() {},
   methods: {
     paymentauthorized(response) {
-      this.$http.post("/api/v1/payment/order", {
+      //remove ID prefix
+      const orderId = response.orderID
+      const index = orderId.indexOf("-");
+      response.orderID = orderId.substring(index + 1);
+      this.$http.post("/api/v1/paypal/order", {
         response,
         transactions: this.transactions
       });

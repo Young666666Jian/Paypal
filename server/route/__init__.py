@@ -1,2 +1,3 @@
 from flask import Blueprint
-payment = Blueprint("payment", __name__, url_prefix="/api/v1/payment")
+paypal = Blueprint("paypal", __name__, url_prefix="/api/v1/paypal")
+alipay = Blueprint("alipay", __name__, url_prefix="/api/v1/alipay")
