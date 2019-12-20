@@ -8,20 +8,20 @@ import logging
 import json
 logging.basicConfig(level=logging.INFO)
 my_api = Api({
-  'mode': 'sandbox',
-  'client_id': 'AYt31Z0myIBIQFgluo0_MmIg9sbIhNgig7B7CL7iLXwPKeK9CMPyl1jsesT025Bm_rGHnpKTgaoyRLwM',
-  'client_secret': 'ECvbE5-MGXyZ94u6ne8QqIbm2k0KHHb8GLsfhG9TsZSShfEIZDU89qHElfPNs2pplCkpwuPanmaRAanH'})
+    'mode': 'sandbox',
+    'client_id': 'AYt31Z0myIBIQFgluo0_MmIg9sbIhNgig7B7CL7iLXwPKeK9CMPyl1jsesT025Bm_rGHnpKTgaoyRLwM',
+    'client_secret': 'ECvbE5-MGXyZ94u6ne8QqIbm2k0KHHb8GLsfhG9TsZSShfEIZDU89qHElfPNs2pplCkpwuPanmaRAanH'})
 # verify payment
 @paypal.route("/order", methods=["POST"])
 def order():
     if not request.json:
-        return jsonify( {"message": "Missing JSON in request"} ), 400
-    print (request.json['response']['orderID'])
+        return jsonify({"message": "Missing JSON in request"}), 400
+    print(request.json['response']['orderID'])
     try:
         GetOrder().get_order(request.json['response']['orderID'])
     except Exception:
         return jsonify({"Error": "Payment Failed."}), 500
-    print ("Info: Payment Successfully.")
+    print("Info: Payment Successfully.")
     return jsonify({"message": "Payment Successfully."}), 200
 
 #  api v1/payments has deprecated, only can get payment info from api order and authorized
@@ -31,6 +31,7 @@ def paymentDetail():
     orderId = arguments.get('orderID')
     authorizationId = arguments.get('authorizationId')
     if orderId:
+        # or from data base
         paymentInfo = GetOrder().get_order(orderId)
     elif authorizationId:
         paymentInfo = GetOrder().get_order(authorizationId)
@@ -56,23 +57,22 @@ def refund():
         return jsonify({"error": errMsg['details']}), 500
     return jsonify({"message": "refund successfully"}), 200
 
+
 @paypal.route("/execute", methods=["GET"])
 def execute():
     arguments = request.args
     print(arguments)
 
-@paypal.route("/subscription", methods=["POST"])
+
+@paypal.route("/createPlan", methods=["POST"])
 def subscription():
-    if not request.json and request.json['response']:
-        return jsonify( {"message": "Missing JSON in request"} ), 400
-    elif not request.json['response']['plan'] and request.json['response']['payment_definitions'] and request.json['response']['type']:
-        return jsonify( {"message": "Missing parameters in request"} ), 400
-    plan = request.json['response']['plan']
-    payment_definitions = request.json['response']['payment_definitions']
-    subscriptionType = request.json['response']['type']
-    billing_plan = BillingPlan(plan, payment_definitions, subscriptionType)
+    if not request.json or not request.json['plan']:
+        return jsonify({"message": "Missing JSON in request"}), 400
+    plan = request.json['plan']
+    billing_plan = BillingPlan(plan, my_api)
     try:
         response = billing_plan.create()
-        print (response)
+        print(billing_plan)
     except Exception:
         return jsonify({"Error": response.error}), 500
+    return jsonify({"message": "refund successfully"}), 200

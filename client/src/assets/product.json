@@ -1,0 +1,23 @@
+{
+    "id": "PROD-4SE660276U221650G",
+    "name": "Vsys cloud Service",
+    "description": "Video streaming service",
+    "type": "SERVICE",
+    "category": "SOFTWARE",
+    "image_url": "https://example.com/streaming.jpg",
+    "home_url": "https://example.com/home",
+    "create_time": "2019-12-19T09:20:43Z",
+    "update_time": "2019-12-19T09:20:43Z",
+    "links": [
+        {
+            "href": "https://api.sandbox.paypal.com/v1/catalogs/products/PROD-4SE660276U221650G",
+            "rel": "self",
+            "method": "GET"
+        },
+        {
+            "href": "https://api.sandbox.paypal.com/v1/catalogs/products/PROD-4SE660276U221650G",
+            "rel": "edit",
+            "method": "PATCH"
+        }
+    ]
+}

@@ -13,6 +13,7 @@
       v-on:payment-cancelled="cancel"
     />
     <div id="paypal-button-container"></div>
+    <v-btn @click="subscribe">subscribe</v-btn>
   </v-card>
 </template>
 <script>
@@ -73,6 +74,67 @@ export default {
     },
     paymentcompleted(response) {
       console.log(JSON.stringify(response));
+    },
+    onSuccess(details, data){
+      console.log("Transaction completed by " + details.payer.name.given_name);
+
+      // OPTIONAL: Call your server to save the transaction
+      return fetch("/paypal-transaction-complete", {
+        method: "post",
+        body: JSON.stringify({
+          orderID: data.orderID
+        })
+      });
+    },
+    subscribe() {
+      this.$http.post("/api/v1/paypal/subscription", {
+        "plan": {
+          "name": "Fast Speed Plan",
+          "description": "Create Plan for Regular",
+          "merchant_preferences": {
+              "auto_bill_amount": "yes",
+              "cancel_url": "http://www.paypal.com/cancel",
+              "initial_fail_amount_action": "continue",
+              "max_fail_attempts": "1",
+              "return_url": "http://www.paypal.com/execute",
+              "setup_fee": {
+                  "currency": "USD",
+                  "value": "25"
+              }
+          }
+        },
+        "payment_definitions": [
+          {
+              "amount": {
+                  "currency": "USD",
+                  "value": "100"
+              },
+              "charge_models": [
+                  {
+                      "amount": {
+                          "currency": "USD",
+                          "value": "10.60"
+                      },
+                      "type": "SHIPPING"
+                  },
+                  {
+                      "amount": {
+                          "currency": "USD",
+                          "value": "20"
+                      },
+                      "type": "TAX"
+                  }
+              ],
+              "cycles": "0",
+              "frequency": "MONTH",
+              "frequency_interval": "1",
+              "name": "Regular 1",
+              "type": "REGULAR"
+          }
+        ],
+        "type": "INFINITE"
+      
+      })
     }
   }
 };
